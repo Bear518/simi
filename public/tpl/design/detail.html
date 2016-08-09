@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>互联网首个设计师专单平台|装修效果图|装修流程|施工监理_简繁家</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="description" content="简繁家提供家装设计、新房装修、装修流程、室内设计、家装设计、室内装修、施工监理等服务和装修知识、装修风格、装修效果图、装修设计图等信息。">
+	<meta name="keywords" content="室内装修,装修流程,装修知识,装修效果图,家装施工监理">
+	<link rel="stylesheet" type="text/css" href="../../static/css/public.css" />
+	<link rel="stylesheet" type="text/css" href="../../static/css/design.css" />
+	<script type="text/javascript" src="../../static/js/lib/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="../../static/js/lib/jquery.scrollLoading-min.js"></script>
+	<script type="text/javascript" src="../../static/js/lib/public.js"></script>
+	<!--[if lt IE 9]>
+      <script type="text/javascript" src="../../static/js/lib/json2-min.js"></script>
+    <![endif]-->
+     <!--[if lt IE 8]>
+      <script type="text/javascript">
+      	if(!-[1,]){window.location.href = "../other/error.html";} 
+      </script>
+    <![endif]-->
+</head>
+<body>
+	<div class="g-hd">
+		<div class="g-wp f-cb">
+			<div class="m-logo f-fl">
+				<h1><a href="../index/index.html">简繁家</a></h1>
+			</div>
+			<div class="f-fr">
+				<div class="user" id="j-userLogin">
+					<a href="../user/login.html">登录</a>/<a href="../user/reg.html">注册</a>
+				</div>
+				<ul class="m-nav f-fl">
+					<li><a href="../index/index.html">首页</a></li>
+					<li class="active"><a href="../design/index.html">设计师</a></li>
+					<li><a href="../live/index.html">装修直播</a></li>
+					<li><a href="../merit/index.html">为什么选简繁家</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="design-detail" id="j-design-detail">
+		<div class="g-wp">
+			<div class="m-tt">
+				<div id="detail-info"></div>
+				<a href="javascript:;" class="btn hide" id="j-collect">收藏作品</a>
+			</div>
+			<div class="m-ct">
+				<div class="desc">
+					<h3>案例介绍：</h3>
+					<p id="desc-description"></p>
+				</div>
+				<div class="imgBox" id="imgBox">
+					<ul class="list" id="imgList"></ul>
+					<div class="design hide" id="j-scheme-design">
+						<a class="m-head" href="">
+							<img src="" alt="">
+						</a>
+						<h4></h4>
+						<div class="auth"><span class="i-icon"></span>认证设计师</div>
+						<div class="info f-cb">
+							<dl class="f-fl"><dt class="info1"></dt><dd>作品</dd></dl><span class="f-fl"></span>
+							<dl class="f-fl"><dt class="info2"></dt><dd>预约</dd></dl>
+						</div>
+						<a href="javascript:;" class="btn"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="g-ft">
+		<div class="m-sitemap f-cb">
+			<div class="g-wp">
+				<div class="sitemap f-fl">
+					<dl>
+						<dt>业主指南</dt>
+						<dd><a href="../guide/index.html?0">业务流程</a></dd>
+						<dd><a href="../guide/index.html?1">三方保障合同</a></dd>
+					</dl>
+					<dl>
+						<dt>设计师指南</dt>
+						<dd><a href="../guide/design.html?0">设计师认证</a></dd>
+						<dd><a href="../guide/design.html?1">作品上传</a></dd>
+						<dd><a href="../guide/design.html?2">上门沟通及量房</a></dd>
+						<dd><a href="../guide/design.html?3">设计师入驻协议</a></dd>
+					</dl>
+					<dl>
+						<dt>关于我们</dt>
+						<dd><a href="../about/index.html#about">关于我们</a></dd>
+						<dd><a href="../about/index.html#contact">联系我们</a></dd>
+					</dl>
+				</div>
+				<div class="erweima f-fr">
+					<img src="../../img/public/erweima.jpg" alt="" />
+				</div>
+			</div>
+		</div>
+		<div class="m-copy">
+			<div class="g-wp">
+			Copyright © 2015-2025 jianfanjia.com All Rights Reserved 武汉家易装科技有限公司 隐私权政策 鄂ICP备15014103号
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+	var doc = $(document.body);
+	var $collect = $('#j-collect');
+	var winHash = window.location.search.substring(1);
+	var $schemeDesign = $('#j-scheme-design');
+	var $collect1 = $schemeDesign.find('.btn');
+	var arr = [];
+	function loadList(){
+		var url = RootUrl+'api/v1/product/'+winHash;
+		$.ajax({
+			url:url,
+			type: 'GET',
+			contentType : 'application/json; charset=utf-8',
+			dataType: 'json',
+			success: function(res){
+				createInfo(res['data'])
+				$(".imgLoad").scrollLoading();
+		   	}
+		});
+	}
+	loadList();
+	function getFavorite(){
+		var url = RootUrl+'api/v1/favorite/product';
+		$.ajax({
+			url:url,
+			type: 'GET',
+			contentType : 'application/json; charset=utf-8',
+			dataType: 'json',
+			success: function(res){	
+				if(res['data'] != null){
+					$.each(res['data']['favorite_product'],function(i,el){
+						if(winHash == el){
+							$collect.addClass('cancel').html('取消收藏');
+							if(window.usertype == 2){
+								$collect1.addClass('cancel').html('取消收藏');
+							}
+							return false;
+						}else{
+							$collect.removeClass('cancel').html('收藏作品');
+							if(window.usertype == 2){
+								$collect1.removeClass('cancel').html('收藏作品');
+							}
+						}
+					})	
+				}
+		   	}
+		});
+	}
+	function createInfo(data){
+		var url = RootUrl+'api/v1/designer/'+data.designerid+'/basicinfo';
+		var imgID = '';
+		var userNamer = ''
+		$.ajax({
+			url:url,
+			type: 'GET',
+			contentType : 'application/json; charset=utf-8',
+			dataType: 'json',
+			async : false,
+			success: function(res){	
+				var designer = res['data'];
+				if(designer != null){
+					imgID = !!designer.imageid ? RootUrl+'api/v1/thumbnail/90/'+designer.imageid : '../../static/img/public/headpic.jpg';
+					userNamer = !!designer.username ? !!designer.username : "";
+					$schemeDesign.find('.m-head').attr('href', '../design/homepage.html?'+designer._id);
+					$schemeDesign.find('img').attr('src', imgID);
+					$schemeDesign.find('h4').html(designer.username+'<span class="i-icon sex'+designer.sex+'"></span>');
+					$schemeDesign.find('.info1').html(designer.product_count);
+					$schemeDesign.find('.info2').html(designer.order_count);
+					$schemeDesign.find('.auth').addClass('auth'+(designer.auth_type-1));
+					if(window.usertype != 2 && window.usertype == 1){
+						$schemeDesign.find('.btn').data('uid',designer._id).html('添加意向')
+					}else if(window.usertype != 2 && window.usertype != 1 && window.usertype != 0){
+						$schemeDesign.find('.btn').attr('href', '../user/login.html?'+window.location.href).html('添加意向')
+					}else if(window.usertype == 2){
+						$schemeDesign.find('.btn').attr('href', 'javascript:;')
+					}
+					$schemeDesign.removeClass('hide');
+				}
+		   	}
+		});
+		var info = '<a href="homepage.html?'+data.designerid+'" class="m-head">'
+						+'<img src="'+imgID+'" alt="'+userNamer+'" />'
+					+'</a>'
+					+'<h2>'+data.cell+'</h2>'
+					+'<p>参考造价：<strong>'+data.total_price+'</strong>万元<span>|</span>户型：'+globalData.house_type[data.house_type]+'<span>|</span>面积：'+data.house_area+'m&sup2;</p>'
+					+'<p>浏览数：'+data.view_count+'<span>|</span>收藏数：'+data.favorite_count+'</p>'
+		var imgList = '';
+		for (var i = 0,len = data.images.length; i < len; i++) {
+			var des = data.images[i].description ? '<p>'+data.images[i].description+'</p>' : ''
+			imgList += '<li><h4>'+data.images[i].section+'</h4><img class="imgLoad" data-url="'+RootUrl+'api/v1/watermark/v1/'+data.images[i].imageid+'" src="../../static/img/public/load.gif" alt="">'+des+'</li>'
+		};
+
+		$('#detail-info').html(info);
+		$collect.removeClass('hide');
+		$('#desc-description').html(data.description);
+		$('#imgList').html(imgList);
+	}
+	$collect.on('click',function(){
+		if(!window.usertype){
+			window.location.href = '../user/login.html?'+window.location.href;
+		}
+		if(!$(this).hasClass('cancel')){
+			favorite('POST',function(res){
+				if(res['msg'] === "success"){
+					$collect.addClass('cancel').html('取消收藏');
+					if(window.usertype == 2){
+						$collect1.addClass('cancel').html('取消收藏');
+					}
+				}
+			})
+		}else{
+			if(confirm("你确定要取消收藏吗？")){
+				favorite('DELETE',function(res){
+					if(res['msg'] === "success"){
+						$collect.removeClass('cancel').html('收藏作品');
+						if(window.usertype == 2){
+							$collect1.removeClass('cancel').html('收藏作品');
+						}
+					}
+				})
+			}
+		}
+	})
+	getFavorite();
+	$collect1.on('click',function(){
+		var slef = $(this);
+		if(!$(this).hasClass('cancel')){
+			favorite('POST',function(res){
+				if(res['msg'] === "success"){
+					$collect.addClass('cancel').html('取消收藏');
+					if(window.usertype == 2){
+						$collect1.addClass('cancel').html('取消收藏');
+					}
+				}
+			})
+		}else{
+			if(confirm("你确定要取消收藏吗？")){
+				favorite('DELETE',function(res){
+					if(res['msg'] === "success"){
+						$collect.removeClass('cancel').html('收藏作品');
+						if(window.usertype == 2){
+							$collect1.removeClass('cancel').html('收藏作品');
+						}
+					}
+				})
+			}
+		}
+	})
+	function favorite(type,fn){
+		var url = RootUrl+'api/v1/favorite/product';
+		$.ajax({
+			url:url,
+			type: type,
+			contentType : 'application/json; charset=utf-8',
+			dataType: 'json',
+			data : JSON.stringify({
+				"_id": winHash
+			}),
+			processData : false,
+			success: function(res){
+				fn(res)				
+		   	}
+		});
+	}
+	arr = [$('#imgBox').offset().top+48,$('#imgBox').offset().left+945];
+	$(window).on('scroll',function(){
+		var winT = $(window).scrollTop();
+		if(winT > arr[0]){
+			$schemeDesign.addClass('fixed').css({'top':0,'right':'auto','left':arr[1]})
+		}else{
+			$schemeDesign.removeClass('fixed').css({'top':48,'right':0,'left':'auto'})
+		}
+	});
+	//添加意向
+	$(document.body).delegate('#addIntent','click',function(ev){
+		ev.preventDefault();
+		var slth = $(this);
+		var uidName = $(this).data('uid');
+		var url = RootUrl+'api/v1/user/designer';
+		$.ajax({
+			url:url,
+			type: 'POST',
+			contentType : 'application/json; charset=utf-8',
+			dataType: 'json',
+			cache : false,
+			data : JSON.stringify({
+				"_id" : uidName
+			}),
+			processData : false,
+			success: function(res){
+				if(res["msg"] == "success"){
+					alert('添加成功');
+					slef.html('查看详情').attr('href','homepage.html?'+uidname).removeClass('addIntent');
+				}else if(res["err_msg"] != null){
+					window.location.href = "../user/owner_design.html";
+				}else{
+					alert("添加失败")
+				}
+		   	}
+		});
+	})
+</script>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?66d38d3af612ed7c0979211372aa9682";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+</script>
